@@ -8,7 +8,7 @@ Globals:
     Runtime: python3.9  # Default runtime for all Lambda functions
     Environment:
       Variables:
-        STAGE: !Sub 'main' 
+        STAGE: 'main' 
         LOG_LEVEL: debug
     Role: arn:aws:iam::437563065463:role/LAMBDA_FULLACCESS_ROLE_DEV
 
