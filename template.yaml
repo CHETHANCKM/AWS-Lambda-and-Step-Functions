@@ -1,0 +1,122 @@
+# This AWS SAM template has been generated from your function's configuration. If
+# your function has one or more triggers, note that the AWS resources associated
+# with these triggers aren't fully specified in this template and include
+# placeholder values. Open this template in AWS Infrastructure Composer or your
+# favorite IDE and modify it to specify a serverless application with other AWS
+# resources.
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: An AWS Serverless Application Model template describing your function.
+Resources:
+  testfile1:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Description: ''
+      MemorySize: 128
+      Timeout: 3
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.9
+      Architectures:
+        - x86_64
+      EphemeralStorage:
+        Size: 512
+      EventInvokeConfig:
+        MaximumEventAgeInSeconds: 21600
+        MaximumRetryAttempts: 2
+      PackageType: Zip
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action:
+                - s3:GetObject
+              Resource: arn:aws:s3:::*
+            - Effect: Allow
+              Action:
+                - cloudwatch:PutMetricData
+                - ds:CreateComputer
+                - ds:DescribeDirectories
+                - ec2:DescribeInstanceStatus
+                - logs:*
+                - ssm:*
+                - ec2messages:*
+              Resource: '*'
+            - Effect: Allow
+              Action:
+                - iam:CreateServiceLinkedRole
+              Resource: >-
+                arn:aws:iam::*:role/aws-service-role/ssm.amazonaws.com/AWSServiceRoleForAmazonSSM*
+              Condition:
+                StringLike:
+                  iam:AWSServiceName: ssm.amazonaws.com
+            - Effect: Allow
+              Action:
+                - iam:DeleteServiceLinkedRole
+                - iam:GetServiceLinkedRoleDeletionStatus
+              Resource: >-
+                arn:aws:iam::*:role/aws-service-role/ssm.amazonaws.com/AWSServiceRoleForAmazonSSM*
+            - Effect: Allow
+              Action:
+                - ssmmessages:CreateControlChannel
+                - ssmmessages:CreateDataChannel
+                - ssmmessages:OpenControlChannel
+                - ssmmessages:OpenDataChannel
+              Resource: '*'
+            - Effect: Allow
+              Action:
+                - logs:CreateLogGroup
+                - logs:CreateLogStream
+                - logs:PutLogEvents
+              Resource: '*'
+            - Effect: Allow
+              Action:
+                - states:*
+              Resource: '*'
+            - Effect: Allow
+              Action:
+                - s3:*
+                - s3-object-lambda:*
+              Resource: '*'
+            - Effect: Allow
+              Action:
+                - cloudformation:DescribeStacks
+                - cloudformation:ListStackResources
+                - cloudwatch:ListMetrics
+                - cloudwatch:GetMetricData
+                - ec2:DescribeSecurityGroups
+                - ec2:DescribeSubnets
+                - ec2:DescribeVpcs
+                - kms:ListAliases
+                - iam:GetPolicy
+                - iam:GetPolicyVersion
+                - iam:GetRole
+                - iam:GetRolePolicy
+                - iam:ListAttachedRolePolicies
+                - iam:ListRolePolicies
+                - iam:ListRoles
+                - lambda:*
+                - logs:DescribeLogGroups
+                - states:DescribeStateMachine
+                - states:ListStateMachines
+                - tag:GetResources
+                - xray:GetTraceSummaries
+                - xray:BatchGetTraces
+              Resource: '*'
+            - Effect: Allow
+              Action:
+                - iam:PassRole
+              Resource: '*'
+              Condition:
+                StringEquals:
+                  iam:PassedToService: lambda.amazonaws.com
+            - Effect: Allow
+              Action:
+                - logs:DescribeLogStreams
+                - logs:GetLogEvents
+                - logs:FilterLogEvents
+              Resource: arn:aws:logs:*:*:log-group:/aws/lambda/*
+      RecursiveLoop: Terminate
+      SnapStart:
+        ApplyOn: None
+      RuntimeManagementConfig:
+        UpdateRuntimeOn: Auto
