@@ -15,7 +15,7 @@ Resources:
       Description: ''
       MemorySize: 128
       Timeout: 3
-      Handler: lambda_function.lambda_handler
+      Handler: lambda_function.TESTFILE1.py
       Runtime: python3.9
       Architectures:
         - x86_64
