@@ -11,6 +11,9 @@ Resources:
   mytestfilecustom:
     Type: AWS::Serverless::Function
     Properties:
+      Code:
+         S3Bucket: myproject-acc-dev
+         S3Key: mytestfilecustom
       CodeUri: .
       Description: ''
       MemorySize: 128
