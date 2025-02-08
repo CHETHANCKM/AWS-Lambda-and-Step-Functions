@@ -13,8 +13,12 @@ Resources:
     Properties:
       FunctionName: TEST_FILE1
       Handler: TEST_FILE1.lambda_handler  # Uses file1.py
+      MemorySize: 128
+      Timeout: 900
   TEST_FILE2:
     Type: AWS::Lambda::Function
     Properties:
       FunctionName: TEST_FILE2
       Handler: TEST_FILE2.lambda_handler  # Uses file2.py
+      MemorySize: 128
+      Timeout: 900
