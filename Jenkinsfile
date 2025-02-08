@@ -30,9 +30,6 @@ pipeline {
 
                     HANDLER=$(grep -A 5 " $FUNCTION_NAME:" template.yaml | grep 'Handler:' | awk '{print $2}')
                     MEMORY=$(grep -A 5 " $FUNCTION_NAME:" template.yaml | grep 'MemorySize:' | awk '{print $2}')
-                    TIMEOUT=900
-                    RUNTIME=$(grep -A 5 " $FUNCTION_NAME:" template.yaml | grep 'Runtime:' | awk '{print $2}')
-
                     echo "Handler: $HANDLER, Memory: $MEMORY, Timeout: $TIMEOUT, Runtime: $RUNTIME"
 
                     ZIP_FILE="${FUNCTION_NAME}.zip"
@@ -47,7 +44,7 @@ pipeline {
 
                     aws lambda create-function \
                         --function-name "$FUNCTION_NAME" \
-                        --runtime "$RUNTIME" \
+                        --runtime "$DEFAULT_RUNTIME" \
                         --role "$ROLE_ARN" \
                         --handler "$HANDLER" \
                         --code "S3Bucket=$S3_BUCKET,S3Key=$ZIP_FILE" \
