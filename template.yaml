@@ -8,13 +8,13 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: An AWS Serverless Application Model template describing your function.
 Resources:
-  FunctionOne:
+  TEST_FILE1:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: MyFunctionOne
+      FunctionName: TEST_FILE1
       Handler: TEST_FILE1.lambda_handler  # Uses file1.py
-  FunctionTwo:
+  TEST_FILE1:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: MyFunctionTwo
+      FunctionName: TEST_FILE1
       Handler: TEST_FILE2.lambda_handler  # Uses file2.py
