@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         S3_BUCKET = 'myproject-acc-dev'
-        ROLE_ARN = 'arn:aws:iam::123456789012:role/my-lambda-role'  // Update this
+        ROLE_ARN = 'arn:aws:iam::437563065463:user/jenkins'  // Update this
         DEFAULT_RUNTIME = 'python3.8'  // Default runtime
         AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
