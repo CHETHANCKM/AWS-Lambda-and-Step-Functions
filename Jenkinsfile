@@ -43,19 +43,7 @@ pipeline {
                     echo "🚀 Uploading $ZIP_FILE to S3..."
                     aws s3 cp "$ZIP_FILE" "s3://$S3_BUCKET/$ZIP_FILE"
 
-                    // echo "🛠️ Creating/Updating Lambda Function: $FUNCTION_NAME..."
-                    // aws lambda create-function \
-                    //     --function-name "$FUNCTION_NAME" \
-                    //     --runtime "$RUNTIME" \
-                    //     --role "$ROLE_ARN" \
-                    //     --handler "$HANDLER" \
-                    //     --code "S3Bucket=$S3_BUCKET,S3Key=$ZIP_FILE" \
-                    //     --timeout $TIMEOUT \
-                    //     --memory-size $MEMORY || \
-                    // aws lambda update-function-code \
-                    //     --function-name "$FUNCTION_NAME" \
-                    //     --s3-bucket "$S3_BUCKET" \
-                    //     --s3-key "$ZIP_FILE"
+                    
                 done
                 '''
             }
