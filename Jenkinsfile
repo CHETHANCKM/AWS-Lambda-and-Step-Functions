@@ -51,7 +51,7 @@ pipeline {
                         --role "$ROLE_ARN" \
                         --handler "$HANDLER" \
                         --code "S3Bucket=$S3_BUCKET,S3Key=$ZIP_FILE" \
-                        --timeout $TIMEOUT \
+                        --timeout 900 \
                         --memory-size $MEMORY || \
                         
                     aws lambda update-function-code \
