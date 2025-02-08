@@ -53,6 +53,11 @@ pipeline {
                         --code "S3Bucket=$S3_BUCKET,S3Key=$ZIP_FILE" \
                         --timeout $TIMEOUT \
                         --memory-size $MEMORY || \
+                        
+                    aws lambda update-function-code \
+                        --function-name "$FUNCTION_NAME" \
+                        --s3-bucket "$S3_BUCKET" \
+                        --s3-key "$ZIP_FILE"
                 done
                 '''
             }
