@@ -1,75 +1,67 @@
 pipeline {
     agent any
-
     environment {
-        PROJECT_NAME = "my-sam-app"
-        S3_BUCKET = "myproject-acc-dev"
-        ARTIFACT_ZIP = "deployment.zip"
-        TEMPLATE_FILE = "template.yaml"
-
-        AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')
-        AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
-        AWS_DEFAULT_REGION = "us-east-1"
+        S3_BUCKET = 'myproject-acc-dev'
+        ROLE_ARN = 'arn:aws:iam::437563065463:role/LAMBDA_FULLACCESS_ROLE_DEV'  // Update this
+        RUNTIME = 'python3.8'  // Default runtime, will be overridden if present in YAML
     }
-
     stages {
-        stage('Build') {
+        stage('Checkout') {
             steps {
-                script {
-                    sh '''
-                    echo "🗑️ Removing old ZIP file..."
-                    rm -f $ARTIFACT_ZIP
-
-                    echo "📦 Compressing Python files into ZIP..."
-                    zip -r9 $ARTIFACT_ZIP . -i "*.py"
-                    '''
-                }
+                checkout scm
             }
         }
-
-        stage('Deploy') {
+        stage('Parse YAML and Build') {
             steps {
-                script {
-                    sh '''
-                    echo "🚀 Uploading ZIP to S3 (overwriting existing file)..."
-                    aws s3 cp $ARTIFACT_ZIP s3://$S3_BUCKET/ --acl private --storage-class STANDARD
+                sh '''
+                echo "🗑️ Cleaning old ZIP files..."
+                rm -f *.zip
 
-                    echo "📦 Packaging SAM Template..."
-                    aws cloudformation package \
-                        --template-file $TEMPLATE_FILE \
-                        --s3-bucket $S3_BUCKET \
-                        --s3-prefix myfolder \
-                        --output-template-file packaged.yaml \
-                        --force-upload
+                # Extract Lambda function names from template.yaml
+                FUNCTIONS=$(yq e '.Resources | keys | .[]' template.yaml)
 
-                    echo "🚀 Deploying to AWS..."
-                    aws cloudformation deploy \
-                        --template-file packaged.yaml \
-                        --stack-name $PROJECT_NAME \
-                        --capabilities CAPABILITY_IAM
-                    '''
-                }
-            }
-        }
+                for FUNCTION_NAME in $FUNCTIONS; do
+                    HANDLER=$(yq e ".Resources.$FUNCTION_NAME.Properties.Handler" template.yaml)
+                    MEMORY=$(yq e ".Resources.$FUNCTION_NAME.Properties.MemorySize" template.yaml)
+                    TIMEOUT=$(yq e ".Resources.$FUNCTION_NAME.Properties.Timeout" template.yaml)
+                    RUNTIME=$(yq e ".Resources.$FUNCTION_NAME.Properties.Runtime" template.yaml)
+                    
+                    [ "$MEMORY" = "null" ] && MEMORY=128
+                    [ "$TIMEOUT" = "null" ] && TIMEOUT=30
+                    [ "$RUNTIME" = "null" ] && RUNTIME=$RUNTIME
 
-        stage('Post Build') {
-            steps {
-                script {
-                    sh '''
-                    echo "📝 Cleaning up old files..."
-                    rm -f $ARTIFACT_ZIP packaged.yaml
-                    '''
-                }
+                    ZIP_FILE="${FUNCTION_NAME}.zip"
+                    
+                    echo "📦 Creating ZIP for $FUNCTION_NAME..."
+                    zip -r9 "$ZIP_FILE" "$FUNCTION_NAME.py"
+
+                    echo "🚀 Uploading $ZIP_FILE to S3..."
+                    aws s3 cp "$ZIP_FILE" "s3://$S3_BUCKET/$ZIP_FILE"
+
+                    echo "🛠️ Creating/Updating Lambda Function: $FUNCTION_NAME..."
+                    aws lambda create-function \
+                        --function-name "$FUNCTION_NAME" \
+                        --runtime "$RUNTIME" \
+                        --role "$ROLE_ARN" \
+                        --handler "$HANDLER" \
+                        --code "S3Bucket=$S3_BUCKET,S3Key=$ZIP_FILE" \
+                        --timeout $TIMEOUT \
+                        --memory-size $MEMORY || \
+                    aws lambda update-function-code \
+                        --function-name "$FUNCTION_NAME" \
+                        --s3-bucket "$S3_BUCKET" \
+                        --s3-key "$ZIP_FILE"
+                done
+                '''
             }
         }
     }
-
     post {
         success {
-            echo "✅ Deployment completed successfully!"
+            echo '✅ Lambda functions deployed successfully!'
         }
         failure {
-            echo "❌ Deployment failed!"
+            echo '❌ Deployment failed!'
         }
     }
 }
