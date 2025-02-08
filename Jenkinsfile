@@ -30,7 +30,7 @@ pipeline {
 
                     HANDLER=$(grep -A 5 " $FUNCTION_NAME:" template.yaml | grep 'Handler:' | awk '{print $2}')
                     MEMORY=$(grep -A 5 " $FUNCTION_NAME:" template.yaml | grep 'MemorySize:' | awk '{print $2}')
-                    TIMEOUT=$(grep -A 5 " $FUNCTION_NAME:" template.yaml | grep 'Timeout:' | awk '{print $2}')
+                    TIMEOUT=900
                     RUNTIME=$(grep -A 5 " $FUNCTION_NAME:" template.yaml | grep 'Runtime:' | awk '{print $2}')
 
                     echo "Handler: $HANDLER, Memory: $MEMORY, Timeout: $TIMEOUT, Runtime: $RUNTIME"
