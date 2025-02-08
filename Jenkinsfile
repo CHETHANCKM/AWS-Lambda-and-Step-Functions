@@ -56,6 +56,7 @@ pipeline {
                     aws cloudformation package \
                         --template-file $TEMPLATE_FILE \
                         --s3-bucket $S3_BUCKET \
+			--s3-prefix my folder \
                         --output-template-file packaged.yaml || { echo "❌ Failed to package CloudFormation template"; exit 1; }
                     '''
                 }
