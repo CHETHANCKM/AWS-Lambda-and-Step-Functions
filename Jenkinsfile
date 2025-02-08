@@ -22,18 +22,18 @@ pipeline {
                 rm -f *.zip
 
                 # Extract function names (assuming they are under "Resources" in template.yaml)
-                FUNCTIONS=$(grep -E '^[[:space:]]{2}[A-Za-z0-9_-]+:' template.yaml | awk '{print $1}' | tr -d ':')
+                FUNCTIONS=$(grep -E '^[[:space:]]{2}[A-Za-z0-9_-]+:' template.yaml | awk '{print $1}' | tr -d ':' | tr '\n' ' ')
+
 
                 for FUNCTION_NAME in $FUNCTIONS; do
+                    echo "Processing function: $FUNCTION_NAME"  # Debug output
+
                     HANDLER=$(grep -A 5 " $FUNCTION_NAME:" template.yaml | grep 'Handler:' | awk '{print $2}')
                     MEMORY=$(grep -A 5 " $FUNCTION_NAME:" template.yaml | grep 'MemorySize:' | awk '{print $2}')
                     TIMEOUT=$(grep -A 5 " $FUNCTION_NAME:" template.yaml | grep 'Timeout:' | awk '{print $2}')
                     RUNTIME=$(grep -A 5 " $FUNCTION_NAME:" template.yaml | grep 'Runtime:' | awk '{print $2}')
 
-                    # Fallback to default values if not found
-                    [ -z "$MEMORY" ] && MEMORY=128
-                    [ -z "$TIMEOUT" ] && TIMEOUT=30
-                    [ -z "$RUNTIME" ] && RUNTIME=$DEFAULT_RUNTIME
+                    echo "Handler: $HANDLER, Memory: $MEMORY, Timeout: $TIMEOUT, Runtime: $RUNTIME"
 
                     ZIP_FILE="${FUNCTION_NAME}.zip"
                     
