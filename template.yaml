@@ -13,14 +13,8 @@ Resources:
     Properties:
       FunctionName: MyFunctionOne
       Handler: TEST_FILE1.lambda_handler  # Uses file1.py
-      Code:
-        S3Bucket: myproject-acc-dev
-        S3Key: myfolder/deployment.zip
   FunctionTwo:
     Type: AWS::Lambda::Function
     Properties:
       FunctionName: MyFunctionTwo
       Handler: TEST_FILE2.lambda_handler  # Uses file2.py
-      Code:
-        S3Bucket: myproject-acc-dev
-        S3Key: myfolder/deployment.zip
