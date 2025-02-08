@@ -7,8 +7,8 @@ pipeline {
         ARTIFACT_ZIP = "deployment.zip"
         TEMPLATE_FILE = "template.yaml"
 
-        AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY')  // Fetch from Jenkins credentials
-        AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_KEY')  // Fetch from Jenkins credentials
+        AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')  // Fetch from Jenkins credentials
+        AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')  // Fetch from Jenkins credentials
         AWS_DEFAULT_REGION = "us-east-1"
     }
 
