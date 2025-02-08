@@ -2,8 +2,8 @@ pipeline {
     agent any
     environment {
         S3_BUCKET = 'myproject-acc-dev'
-        ROLE_ARN = 'arn:aws:iam::437563065463:role/LAMBDA_FULLACCESS_ROLE_DEV'  // Update this
-        RUNTIME = 'python3.8'  // Default runtime, will be overridden if present in YAML
+        ROLE_ARN = 'arn:aws:iam::123456789012:role/my-lambda-role'  // Update this
+        DEFAULT_RUNTIME = 'python3.8'  // Default runtime
     }
     stages {
         stage('Checkout') {
@@ -11,24 +11,25 @@ pipeline {
                 checkout scm
             }
         }
-        stage('Parse YAML and Build') {
+        stage('Parse YAML and Deploy') {
             steps {
                 sh '''
                 echo "🗑️ Cleaning old ZIP files..."
                 rm -f *.zip
 
-                # Extract Lambda function names from template.yaml
-                FUNCTIONS=$(yq e '.Resources | keys | .[]' template.yaml)
+                # Extract function names (assuming they are under "Resources" in template.yaml)
+                FUNCTIONS=$(grep -E '^[[:space:]]{2}[A-Za-z0-9_-]+:' template.yaml | awk '{print $1}' | tr -d ':')
 
                 for FUNCTION_NAME in $FUNCTIONS; do
-                    HANDLER=$(yq e ".Resources.$FUNCTION_NAME.Properties.Handler" template.yaml)
-                    MEMORY=$(yq e ".Resources.$FUNCTION_NAME.Properties.MemorySize" template.yaml)
-                    TIMEOUT=$(yq e ".Resources.$FUNCTION_NAME.Properties.Timeout" template.yaml)
-                    RUNTIME=$(yq e ".Resources.$FUNCTION_NAME.Properties.Runtime" template.yaml)
-                    
-                    [ "$MEMORY" = "null" ] && MEMORY=128
-                    [ "$TIMEOUT" = "null" ] && TIMEOUT=30
-                    [ "$RUNTIME" = "null" ] && RUNTIME=$RUNTIME
+                    HANDLER=$(grep -A 5 " $FUNCTION_NAME:" template.yaml | grep 'Handler:' | awk '{print $2}')
+                    MEMORY=$(grep -A 5 " $FUNCTION_NAME:" template.yaml | grep 'MemorySize:' | awk '{print $2}')
+                    TIMEOUT=$(grep -A 5 " $FUNCTION_NAME:" template.yaml | grep 'Timeout:' | awk '{print $2}')
+                    RUNTIME=$(grep -A 5 " $FUNCTION_NAME:" template.yaml | grep 'Runtime:' | awk '{print $2}')
+
+                    # Fallback to default values if not found
+                    [ -z "$MEMORY" ] && MEMORY=128
+                    [ -z "$TIMEOUT" ] && TIMEOUT=30
+                    [ -z "$RUNTIME" ] && RUNTIME=$DEFAULT_RUNTIME
 
                     ZIP_FILE="${FUNCTION_NAME}.zip"
                     
