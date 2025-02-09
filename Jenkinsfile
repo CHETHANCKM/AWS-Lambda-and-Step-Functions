@@ -28,7 +28,8 @@ pipeline {
 
 
                 for FUNCTION_NAME in $FUNCTIONS; do
-                    echo "Processing function: $FUNCTION_NAME"  # Debug output
+                    def FILE_NAME = "${env.APPLICATION_NAME}_${env.FUNCTION_NAME}_${env.ENVIRONMENT}".toLowerCase()
+                    echo "Processing function: $FILE_NAME"  # Debug output
 
                     HANDLER=$(grep -A 5 " $FUNCTION_NAME:" template.yaml | grep 'Handler:' | awk '{print $2}')
                     MEMORY=$(grep -A 5 " $FUNCTION_NAME:" template.yaml | grep 'MemorySize:' | awk '{print $2}')
