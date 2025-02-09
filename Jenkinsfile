@@ -9,11 +9,12 @@ pipeline {
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
         AWS_DEFAULT_REGION = "us-east-1"
 
-        if [ ${env.GIT_BRANCH} = "main" ]; then
-            ENVIRONMENT="prod"
-        else
+        if (${env.GIT_BRANCH} = "main"){
+            ENVIRONMENT = 'prod'
+        }
+        else {
             ENVIRONMENT=${env.GIT_BRANCH}
-        fi
+        }
 
     }
     stages {
