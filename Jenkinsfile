@@ -35,13 +35,13 @@ pipeline {
                     MEMORY=$(grep -A 5 " $FUNCTION_NAME:" template.yaml | grep 'MemorySize:' | awk '{print $2}')
                     echo "Handler: $HANDLER, Memory: $MEMORY, Timeout: $TIMEOUT, Runtime: $RUNTIME"
 
-                    ZIP_FILE="${FILE_NAME}.zip"
+                    // ZIP_FILE="${FILE_NAME}.zip"
                     
-                    echo "📦 Creating ZIP for $FILE_NAME..."
-                    zip -r9 "$ZIP_FILE" "$FILE_NAME.py"
+                    // echo "📦 Creating ZIP for $FILE_NAME..."
+                    // zip -r9 "$ZIP_FILE" "$FILE_NAME.py"
 
-                    echo "🚀 Uploading $ZIP_FILE to S3..."
-                    aws s3 cp "$ZIP_FILE" "s3://$S3_BUCKET/$ZIP_FILE"
+                    // echo "🚀 Uploading $ZIP_FILE to S3..."
+                    // aws s3 cp "$ZIP_FILE" "s3://$S3_BUCKET/$ZIP_FILE"
 
                     // echo "🛠️ Creating/Updating Lambda Function: $FILE_NAME..."
 
