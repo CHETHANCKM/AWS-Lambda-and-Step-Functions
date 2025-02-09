@@ -35,9 +35,9 @@ pipeline {
                     MEMORY=$(grep -A 5 " $FUNCTION_NAME:" template.yaml | grep 'MemorySize:' | awk '{print $2}')
                     echo "Handler: $HANDLER, Memory: $MEMORY, Timeout: $TIMEOUT, Runtime: $RUNTIME"
 
-                    ZIP_FILE="${FILE_NAME}.zip"
+                    ZIP_FILE="${FUNCTION_NAME}.zip"
                     
-                    echo "📦 Creating ZIP for $FILE_NAME..."
+                    echo "📦 Creating ZIP for $FUNCTION_NAME..."
                     zip -r9 "$ZIP_FILE" "$FUNCTION_NAME.py"
 
                     echo "🚀 Uploading $ZIP_FILE to S3..."
