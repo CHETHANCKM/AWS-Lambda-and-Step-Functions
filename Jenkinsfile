@@ -38,7 +38,7 @@ pipeline {
                     ZIP_FILE="${FILE_NAME}.zip"
                     
                     echo "📦 Creating ZIP for $FILE_NAME..."
-                    zip -r9 "$ZIP_FILE" "$FILE_NAME.py"
+                    zip -r9 "$ZIP_FILE" "$FUNCTION_NAME.py"
 
                     echo "🚀 Uploading $ZIP_FILE to S3..."
                     aws s3 cp "$ZIP_FILE" "s3://$S3_BUCKET/$ZIP_FILE"
