@@ -28,7 +28,9 @@ pipeline {
 
 
                 for FUNCTION_NAME in $FUNCTIONS; do
-                    FILE_NAME="${APPLICATION_NAME}_${FUNCTION_NAME}_${ENVIRONMENT}".toLowerCase()
+                    FILE_NAME="${APPLICATION_NAME}_${FUNCTION_NAME}_${ENVIRONMENT}"
+                    FILE_NAME=$(echo "$FILE_NAME" | tr '[:upper:]' '[:lower:]')  # Convert to lowercase
+
                     echo "Processing function: $FILE_NAME"  # Debug output
 
                     HANDLER=$(grep -A 5 " $FUNCTION_NAME:" template.yaml | grep 'Handler:' | awk '{print $2}')
