@@ -28,7 +28,7 @@ pipeline {
 
 
                 for FUNCTION_NAME in $FUNCTIONS; do
-                    FILE_NAME = ""${APPLICATION_NAME}_${FUNCTION_NAME}_${ENVIRONMENT}"
+                    FILE_NAME = "${APPLICATION_NAME}_${FUNCTION_NAME}_${ENVIRONMENT}"
                     echo "Processing function: $FUNCTION_NAME"  # Debug output
 
                     HANDLER=$(grep -A 5 " $FUNCTION_NAME:" template.yaml | grep 'Handler:' | awk '{print $2}')
