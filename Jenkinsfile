@@ -8,19 +8,20 @@ pipeline {
         AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
         AWS_DEFAULT_REGION = "us-east-1"
-
-        if (${env.GIT_BRANCH}=='main'){
-            ENVIRONMENT = 'prod'
-        }
-        else {
-            ENVIRONMENT=${env.GIT_BRANCH}
-        }
-
     }
     stages {
         stage('Checkout') {
             steps {
                 checkout scm
+                script {
+                    if (env.GIT_BRANCH == 'main') {  // Use '==' for comparison
+                        env.ENVIRONMENT = 'prod'
+                    } else {
+                        env.ENVIRONMENT = env.GIT_BRANCH
+                    }
+                    echo "Branch: ${env.GIT_BRANCH}"
+                    echo "Environment: ${env.ENVIRONMENT}"
+                }                
             }
         }
         stage('Parse YAML and Deploy') {
