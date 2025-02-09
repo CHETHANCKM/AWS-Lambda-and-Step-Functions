@@ -2,13 +2,18 @@ pipeline {
     agent any
     environment {
         APPLICATION_NAME = "data-movement"
-        ENVIRONMENT = env.GIT_BRANCH == 'main' ? 'prod' : env.GIT_BRANCH
         S3_BUCKET = 'myproject-acc-dev'
         ROLE_ARN = 'arn:aws:iam::437563065463:role/LAMBDA_FULLACCESS_ROLE_DEV'  // Update this
         DEFAULT_RUNTIME = 'python3.9'  // Default runtime
         AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
         AWS_DEFAULT_REGION = "us-east-1"
+
+        if [ "$GIT_BRANCH" = "main" ]; then
+            ENVIRONMENT="prod"
+        else
+            ENVIRONMENT="$GIT_BRANCH"
+        fi
 
     }
     stages {
@@ -61,6 +66,8 @@ pipeline {
                         --function-name "$FILE_NAME" \
                         --s3-bucket "$S3_BUCKET" \
                         --s3-key "$ZIP_FILE"
+
+
 
                 done
                 '''
